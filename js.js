@@ -6,40 +6,47 @@ var holder = [];
 $(document).ready(function () {
 
     var lotteryNumber = [];
-    var index = -1;
-
+    
+	var count = 0
     $('#generate').on('click', go);
 
     function go() {
-        clearBalls();
-        lotteryNumber = generateLottoNumbers(lotteryNumber);
-        for (var i = 0; i <= lotteryNumber.length - 1; i++) {
+		if(count > HowManyNumbers - 1){
+			clearBalls();
+        }else if(count === HowManyNumbers - 1){
+						 $('#generate').text("New Lotto")
+						 
+		}else{
+			 $('#generate').text("Digit " + (count + 1).toString())
+		}
+		
+		
+		setTimeout(function(){
+			var nextNumber = generateLottoNumber()
+			var ball = createBall(nextNumber);
+			$('#box').append(ball).delay(1000);
 
-            var ball = createBall(lotteryNumber[i]);
-
-            holder.push(ball);
-
-            $('#box').append(ball).delay(1000);
-
-        }
+			
+		},1000)
+		count++
     }
 
     function clearBalls() {
         $('#box').empty();
-        index = -1;
-        lotteryNumber = [];
+        count = 0;
+		 $('#generate').text("Digit " + (count + 1).toString())
+		holder = []
     }
 
-    function generateLottoNumbers(_lotteryNumber) {
+    function generateLottoNumber() {
 
-        while (_lotteryNumber.length < HowManyNumbers) {
-
+       
+			do{
             var rnd = randomNum(0, digits);
-            if (!_lotteryNumber.includes(rnd)) {
-                _lotteryNumber.push(rnd);
-            }
-        }
-        return _lotteryNumber;
+           
+			}while(holder.includes(rnd))
+        holder.push(rnd)
+        return rnd;
     }
 
     function createBall(number) {
@@ -47,9 +54,7 @@ $(document).ready(function () {
         var ball = $('<span>');
         $(ball).text(number);
         $(ball).addClass('ball');
-        index++;
-        $(ball).css('animation', 'bounce-in-top ' + (index * 500).toString() + 'ms cubic-bezier(0.645, 0.045, 0.355, 1.000) forwards');
-        $(ball).attr('id', 'ball_' + index.toString());
+        $(ball).css('animation', 'bounce-in-top 500ms cubic-bezier(0.645, 0.045, 0.355, 1.000) forwards');
         return ball;
     }
 
